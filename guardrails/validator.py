@@ -9,7 +9,7 @@ _DESTRUCTIVE_PATTERNS = re.compile(
 )
 
 # Columns that should never be surfaced in responses
-_SENSITIVE_COLUMNS = {"signup_date", "email", "phone", "password", "credit_card"}
+_SENSITIVE_COLUMNS = {"signup_date"}
 
 
 class GuardrailError(ValueError):

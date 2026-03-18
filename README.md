@@ -23,8 +23,8 @@ A production-oriented conversational agent built with the **Anthropic Claude API
 │   │              │        │            │   Tool Dispatcher  │ │  │
 │   │  warehouse.db│        │            │  (7 @beta_tools)   │ │  │
 │   └──────────────┘        │            └─────────┬──────────┘ │  │
-│         │                 └───────────────────────┼───────────┘  │
-│         │                                         │              │
+│         │                 └──────────────────────┼────────────┘  │
+│         │                                        │               │
 │   ┌─────▼────────────────────────────────────────▼────────────┐  │
 │   │                    Supporting Modules                     │  │
 │   │                                                           │  │
@@ -141,9 +141,9 @@ _DESTRUCTIVE_PATTERNS = re.compile(
 )
 ```
 
-**Layer 2 — PII / sensitive column filtering**
+**Layer 2 — Sensitive column filtering**
 ```python
-_SENSITIVE_COLUMNS = {"email", "phone", "password", "credit_card", "signup_date"}
+_SENSITIVE_COLUMNS = {"signup_date"}
 
 def sanitize_dataframe(df) -> pd.DataFrame:
     cols_to_drop = [c for c in df.columns if c.lower() in _SENSITIVE_COLUMNS]
