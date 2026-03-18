@@ -1,0 +1,16 @@
+user_id,Name,Region,signup_date
+U001,Alice Martin,North,2026-01-05
+U002,Bob Chen,South,2026-01-06
+U003,,East,2026-01-07
+U004,Diana Lopez,West,2026-01-08
+U005,Ethan Kim,North,2026-01-09
+U006,Fiona Walsh,South,2026-01-10
+U007,George Tanaka,East,2026-01-11
+U008,,West,2026-01-12
+U009,Ivan Petrov,North,2026-01-13
+U010,Julia Souza,South,2026-01-14
+U011,Karl Müller,East,2026-01-15
+U012,Laura Patel,West,2026-01-16
+U013,Marco Rossi,North,2026-01-17
+U014,Nadia Okonkwo,South,2026-01-18
+U015,Oscar Fernandez,East,2026-01-19
