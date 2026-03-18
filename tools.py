@@ -98,12 +98,13 @@ def get_daily_active_users(start_date: str = "", end_date: str = "") -> str:
         check_data_available("dau")
         conditions = []
         if start_date:
-            conditions.append(f"sale_date >= '{start_date}'")
+            conditions.append("sale_date >= ?")
         if end_date:
-            conditions.append(f"sale_date <= '{end_date}'")
+            conditions.append("sale_date <= ?")
         where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
         sql = f"SELECT sale_date, dau FROM dau {where} ORDER BY sale_date"
-        df = run_query(sql)
+        params = tuple(d for d in [start_date, end_date] if d)
+        df = run_query(sql, params)
         if df.empty:
             return "No DAU data found for the specified range."
         total = df["dau"].sum()
@@ -133,7 +134,7 @@ def get_top_products(n: int = 5, date: str = "") -> str:
             sql = f"""
                 SELECT product_name, SUM(amount) AS total_revenue, SUM(quantity) AS total_units
                 FROM curated_data
-                WHERE sale_date = '{date}'
+                WHERE sale_date = ?
                 GROUP BY product_name
                 ORDER BY total_revenue DESC
                 LIMIT {int(n)}
@@ -146,7 +147,7 @@ def get_top_products(n: int = 5, date: str = "") -> str:
                 ORDER BY total_revenue DESC
                 LIMIT {int(n)}
             """
-        df = run_query(sql)
+        df = run_query(sql, (date,) if date else ())
         if df.empty:
             return f"No sales data found{' for ' + date if date else ''}."
         table = _df_to_markdown(df)
@@ -169,7 +170,7 @@ def get_sales_by_region(date: str = "") -> str:
     """
     try:
         check_data_available("curated_data")
-        where = f"WHERE sale_date = '{date}'" if date else ""
+        where = "WHERE sale_date = ?" if date else ""
         sql = f"""
             SELECT region,
                    COUNT(*) AS transactions,
@@ -180,7 +181,7 @@ def get_sales_by_region(date: str = "") -> str:
             GROUP BY region
             ORDER BY total_revenue DESC
         """
-        df = run_query(sql)
+        df = run_query(sql, (date,) if date else ())
         if df.empty:
             return "No regional data found."
         table = _df_to_markdown(df)
@@ -217,9 +218,10 @@ def list_warehouse_tables() -> str:
         lines = ["**Warehouse Tables:**\n"]
         with get_connection() as conn:
             for table in tables:
-                cursor = conn.execute(f"PRAGMA table_info({table})")
+                safe = table.replace('"', '""')
+                cursor = conn.execute(f'PRAGMA table_info("{safe}")')
                 cols = [row[1] for row in cursor.fetchall()]
-                cursor2 = conn.execute(f"SELECT COUNT(*) FROM {table}")
+                cursor2 = conn.execute(f'SELECT COUNT(*) FROM "{safe}"')
                 count = cursor2.fetchone()[0]
                 lines.append(f"**{table}** ({count:,} rows)")
                 lines.append(f"  Columns: {', '.join(cols)}\n")

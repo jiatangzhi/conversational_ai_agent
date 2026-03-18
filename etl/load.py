@@ -54,7 +54,7 @@ def list_tables() -> list[str]:
         return [row[0] for row in cursor.fetchall()]
 
 
-def run_query(sql: str) -> pd.DataFrame:
+def run_query(sql: str, params: tuple = ()) -> pd.DataFrame:
     """Execute a read-only SQL query and return results as DataFrame."""
     with get_connection() as conn:
-        return pd.read_sql_query(sql, conn)
+        return pd.read_sql_query(sql, conn, params=params)
